@@ -1,11 +1,28 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Delete Package Versions
+description: Deletes package versions
 inputs:
-  milliseconds: # change this
+  owner:
+    description: >
+      Owner of the repo hosting the package.
+      Defaults to the owner of the repo executing the workflow.
+    required: false
+
+  package-name:
+    description: >
+      Name of the package.
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+
+  package-type:
+    description: >
+      Type of the package.
+      Defaults to npm.
+    required: false
+
+  token:
+    description: >
+      The token used to authenticate with GitHub Packages.
+    required: true
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
