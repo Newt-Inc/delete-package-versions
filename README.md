@@ -5,7 +5,7 @@ This action deletes versions of a package from [GitHub Packages](https://github.
 ## Usage
 
 ```yaml
-- uses: actions/delete-package-versions@v3
+- uses: Newt-Inc/delete-package-versions@v1
   with:
   # Owner of the repo hosting the package.
   # Defaults to the owner of the repo executing the workflow.
