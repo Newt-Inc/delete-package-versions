@@ -1,27 +1,47 @@
-import * as core from '@actions/core'
+import {getInput, setFailed} from '@actions/core'
 import {Octokit} from 'octokit'
+import {context} from '@actions/github'
+
+type PackageType =
+  | 'npm'
+  | 'maven'
+  | 'rubygems'
+  | 'docker'
+  | 'nuget'
+  | 'container'
 
 async function run(): Promise<void> {
   try {
-    const token: string = core.getInput('token')
+    const token: string = getInput('token')
     const octokit = new Octokit({
       auth: token
     })
 
-    const ORG = 'Newt-Inc'
-    const PACKAGE_TYPE = 'npm'
-    const packageName: string = core.getInput('package-name')
+    const org: string = getInput('owner')
+      ? getInput('owner')
+      : context.repo.owner
+    const packageName: string = getInput('package-name')
+    const packageType: PackageType = [
+      'npm',
+      'maven',
+      'rubygems',
+      'docker',
+      'nuget',
+      'container'
+    ].includes(getInput('package-type'))
+      ? (getInput('package-type') as PackageType)
+      : 'npm'
 
     await octokit.request(
       'DELETE /orgs/{org}/packages/{package_type}/{package_name}',
       {
-        package_type: PACKAGE_TYPE,
+        org,
         package_name: packageName,
-        org: ORG
+        package_type: packageType
       }
     )
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) setFailed(error.message)
   }
 }
 
