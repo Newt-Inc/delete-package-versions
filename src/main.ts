@@ -1,16 +1,25 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {Octokit} from 'octokit'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const token: string = core.getInput('token')
+    const octokit = new Octokit({
+      auth: token
+    })
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const ORG = 'Newt-Inc'
+    const PACKAGE_TYPE = 'npm'
+    const packageName: string = core.getInput('package-name')
 
-    core.setOutput('time', new Date().toTimeString())
+    await octokit.request(
+      'DELETE /orgs/{org}/packages/{package_type}/{package_name}',
+      {
+        package_type: PACKAGE_TYPE,
+        package_name: packageName,
+        org: ORG
+      }
+    )
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
